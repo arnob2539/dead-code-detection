@@ -21,6 +21,9 @@ def used_function():
     print(f"Used function result: {result}")
 
 
+used_variable = 10
+print(f"Used variable: {used_variable}")
+
 # Unused functions and variables
 
 
@@ -32,6 +35,8 @@ def divide(a, b):
 def unused_function():
     print("This function is unused.")
 
+
+unused_variable = 20
 
 
 # Main program
@@ -46,8 +51,11 @@ if __name__ == "__main__":
 
 
 def another_unused_function():
+
     print("Another unused function.")
 
+
+another_unused_variable = 30
 
 
 # More unused code...
