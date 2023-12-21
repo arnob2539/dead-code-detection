@@ -1,16 +1,34 @@
-# This is a sample Python script.
+import ast
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+def detect_dead_code(filepath):
+    with open(filepath) as f:
+        source_code = f.read()
 
+    # Find all function definitions and variable names.
+    functions = {node.name for node in ast.walk(ast.parse(source_code)) if isinstance(node, ast.FunctionDef)}
+    # print(functions)
+    # Find all function calls and variable names in expressions.
+    calls = set()
+    for node in ast.walk(ast.parse(source_code)):
+        if isinstance(node, ast.Name):
+            calls.add(node.id)
+        elif isinstance(node, ast.Attribute):
+            # Handle Attribute nodes separately
+            calls.add(node.attr)
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+    # Exclude built-in functions and other unwanted entries.
+    # print(calls)
+    calls.discard("print")
+    calls.discard("__name__")
+    # print(calls)
+    # Find all unused functions.
+    unused_functions = functions - calls
 
+    # Print the unused functions.
+    if unused_functions:
+        print("Unused functions:")
+        for f in unused_functions:
+            print(f)
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+if __name__ == "__main__":
+    detect_dead_code("dead_codes/1.py")
