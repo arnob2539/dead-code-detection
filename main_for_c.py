@@ -1,30 +1,27 @@
-from pycparser import parse_file, c_ast
-
+import re
 
 def detect_dead_code(file_path):
-    ast = parse_file(file_path, use_cpp=True)
+    with open(file_path, 'r') as file:
+        source_code = file.read()
 
-    # Define a visitor to traverse the AST
-    class DeadCodeVisitor(c_ast.NodeVisitor):
-        def visit_FuncDef(self, node):
-            # Add your dead code detection logic here
-            # Example: check if function is never called
-            if node.decl.name not in called_functions:
-                print(f"Potential dead code: {node.decl.name}")
+    # Define a regular expression for function declarations
+    function_declaration_pattern = re.compile(r'\b(?:int|void|char|float)\s+([a-zA-Z_]\w*)\s*\([^)]*\)\s*{')
 
-    # You need a list of called functions to determine dead code accurately
-    called_functions = set()
+    # Find all function declarations in the source code
+    function_declarations = function_declaration_pattern.findall(source_code)
 
-    class FunctionCallVisitor(c_ast.NodeVisitor):
-        def visit_FuncCall(self, node):
-            if isinstance(node.name, c_ast.ID):
-                called_functions.add(node.name.name)
+    # Define a regular expression for function calls
+    function_call_pattern = re.compile(r'\b([a-zA-Z_]\w*)\s*\([^)]*\)\s*;')
 
-    # Traverse the AST to collect called functions
-    FunctionCallVisitor().visit(ast)
-    # Traverse the AST again to detect dead code
-    DeadCodeVisitor().visit(ast)
+    # Find all function calls in the source code
+    function_calls = function_call_pattern.findall(source_code)
 
+    # Identify potential dead code by comparing function declarations and function calls
+    dead_code = set(function_declarations) - set(function_calls)
+
+    # Print potential dead code
+    for dead_function in dead_code:
+        print(f"Potential dead code: {dead_function}")
 
 if __name__ == '__main__':
     # Example usage:
