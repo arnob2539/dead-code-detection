@@ -26,5 +26,6 @@ def detect_dead_code(file_path):
     DeadCodeVisitor().visit(ast)
 
 
-# Example usage:
-detect_dead_code('your_c_file.c')
+if __name__ == '__main__':
+    # Example usage:
+    detect_dead_code('dead_codes/1.c')
