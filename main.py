@@ -30,5 +30,6 @@ def detect_dead_code(filepath):
         for f in unused_functions:
             print(f)
 
+
 if __name__ == "__main__":
     detect_dead_code("dead_codes/1.py")
