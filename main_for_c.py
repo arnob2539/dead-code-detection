@@ -23,6 +23,7 @@ def detect_dead_code(file_path):
     for dead_function in dead_code:
         print(f"Potential dead code: {dead_function}")
 
+
 if __name__ == '__main__':
     # Example usage:
     detect_dead_code('dead_codes/1.c')

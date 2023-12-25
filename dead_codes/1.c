@@ -1,17 +1,18 @@
 #include <stdio.h>
 
-void usedFunction() {
-    printf("This function is used.\n");
-}
-
+// Function with dead code
 void unusedFunction() {
-    printf("This function is never used.\n");
+    printf("This function is never called.\n");
 }
 
 int main() {
+    // Function call
     usedFunction();
-    // Commenting out the next line to create potential dead code
-    // unusedFunction();
 
     return 0;
+}
+
+// Function with actual use
+void usedFunction() {
+    printf("This function is called.\n");
 }
