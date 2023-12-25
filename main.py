@@ -1,35 +1,30 @@
-import ast
-
-def detect_dead_code(filepath):
-    with open(filepath) as f:
-        source_code = f.read()
-
-    # Find all function definitions and variable names.
-    functions = {node.name for node in ast.walk(ast.parse(source_code)) if isinstance(node, ast.FunctionDef)}
-    # print(functions)
-    # Find all function calls and variable names in expressions.
-    calls = set()
-    for node in ast.walk(ast.parse(source_code)):
-        if isinstance(node, ast.Name):
-            calls.add(node.id)
-        elif isinstance(node, ast.Attribute):
-            # Handle Attribute nodes separately
-            calls.add(node.attr)
-
-    # Exclude built-in functions and other unwanted entries.
-    # print(calls)
-    calls.discard("print")
-    calls.discard("__name__")
-    # print(calls)
-    # Find all unused functions.
-    unused_functions = functions - calls
-
-    # Print the unused functions.
-    if unused_functions:
-        print("Unused functions:")
-        for f in unused_functions:
-            print(f)
+from pycparser import parse_file, c_ast
 
 
-if __name__ == "__main__":
-    detect_dead_code("dead_codes/1.py")
+def detect_dead_code(file_path):
+    ast = parse_file(file_path, use_cpp=True)
+
+    # Define a visitor to traverse the AST
+    class DeadCodeVisitor(c_ast.NodeVisitor):
+        def visit_FuncDef(self, node):
+            # Add your dead code detection logic here
+            # Example: check if function is never called
+            if node.decl.name not in called_functions:
+                print(f"Potential dead code: {node.decl.name}")
+
+    # You need a list of called functions to determine dead code accurately
+    called_functions = set()
+
+    class FunctionCallVisitor(c_ast.NodeVisitor):
+        def visit_FuncCall(self, node):
+            if isinstance(node.name, c_ast.ID):
+                called_functions.add(node.name.name)
+
+    # Traverse the AST to collect called functions
+    FunctionCallVisitor().visit(ast)
+    # Traverse the AST again to detect dead code
+    DeadCodeVisitor().visit(ast)
+
+
+# Example usage:
+detect_dead_code('your_c_file.c')
