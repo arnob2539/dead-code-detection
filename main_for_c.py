@@ -21,6 +21,8 @@ def detect_dead_code(file_path):
 
     # Print potential dead code
     for dead_function in dead_code:
+        if dead_function == 'main':
+            continue
         print(f"Potential dead code: {dead_function}")
 
 
